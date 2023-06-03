@@ -1,5 +1,6 @@
 import random
 import time
+import tkinter as tk
 
 def read_teams_from_file(file_path):
     with open(file_path, "r") as file:
@@ -18,22 +19,20 @@ def generate_fixtures(selected_teams):
     return fixtures
 
 def display_quarter_finals(selected_teams):
-    print("Quarter-Finals Teams:")
+    text = "Quarter-Finals Teams:\n"
     for i, team in enumerate(selected_teams, start=1):
-        time.sleep(0.5)
-        print(f"Pick: {i} | Team: {team}")
+        text += f"Pick: {i} | Team: {team}\n"
+    return text
 
 def display_selected_team(selected_team):
-    time.sleep(0.5)
     pick_number, team_name = selected_team
-    print(f"Pick: {pick_number} | Selected Team: {team_name}")
+    text = f"Pick: {pick_number} | Selected Team: {team_name}\n"
+    return text
 
 def display_fixture(fixture):
     home_team, away_team = fixture
-    print("------------------------------------------------")
-    time.sleep(0.5)
-    print(f"Fixture: {home_team} vs {away_team}")
-    print("------------------------------------------------")
+    text = f"Fixture: {home_team} vs {away_team}\n"
+    return text
 
 def main():
     # Read teams from file
@@ -43,17 +42,36 @@ def main():
     # Randomly select eight teams
     selected_teams = random.sample(all_teams, 8)
 
+    # Initialize Tkinter window
+    window = tk.Tk()
+    window.title("Team Selection and Fixtures")
+    window.geometry("400x400")
+
+    # Create text widget for displaying information
+    text_widget = tk.Text(window, height=20, width=40)
+    text_widget.pack()
+
     # Display the quarter-finals teams
-    display_quarter_finals(selected_teams)
+    quarter_finals_text = display_quarter_finals(selected_teams)
+    text_widget.insert(tk.END, quarter_finals_text)
+    text_widget.update()
 
     # Add pick numbers to the selected teams
     selected_teams = [(i + 1, team) for i, team in enumerate(selected_teams)]
 
     for i, selected_team in enumerate(selected_teams, start=1):
-        display_selected_team(selected_team)
+        selected_text = display_selected_team(selected_team)
+        text_widget.insert(tk.END, selected_text)
+        text_widget.update()
 
         if i % 2 == 0:
             fixture = (selected_teams[i - 2][1], selected_teams[i - 1][1])
-            display_fixture(fixture)
+            fixture_text = display_fixture(fixture)
+            text_widget.insert(tk.END, fixture_text)
+            text_widget.update()
+
+        time.sleep(0.5)
+
+    window.mainloop()
 
 main()
